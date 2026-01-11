@@ -4,6 +4,7 @@ from typing import List
 
 from PIL import Image, UnidentifiedImageError
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from app.adapters.blip_adapter import BLIPCaptioningAdapter
@@ -16,6 +17,14 @@ from app.core.rchestrator import run_pipeline
 from app.domain.models import ImageItem, Cluster
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Maximum number of images allowed
 MAX_IMAGES = 24
