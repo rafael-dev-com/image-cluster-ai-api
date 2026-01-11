@@ -21,8 +21,16 @@ This Python project allows you to **cluster similar images** using **OpenCLIP em
 ## Requirements
 
 - Python 3.11+  
-- GPU recommended for faster AI processing (CUDA or MPS).  
+- Runs on CPU, with optional GPU acceleration (CUDA or Apple MPS) for faster processing.  
 - Install dependencies via `requirements.txt`.
 
 ---
 
+ git clone https://github.com/rafael-dev-com/image-cluster-ai-api.git
+ cd image-cluster-ai-api
+ python3.11 -m venv venv
+ source venv/bin/activate
+ pip install --upgrade pip setuptools wheel
+ pip install -r requirements.txt
+ export PYTHONPATH=src
+ uvicorn app.adapters.web.api:app --port 8000 --reload 
