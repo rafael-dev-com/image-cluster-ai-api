@@ -15,12 +15,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Environment variable
-ENV PORT=8000
+ENV PORT=8001
 
 ENV PYTHONPATH=src
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Startup command using PORT variable
 CMD ["sh", "-c", "uvicorn src.app.adapters.web.api:app --host 0.0.0.0 --port ${PORT}"]
