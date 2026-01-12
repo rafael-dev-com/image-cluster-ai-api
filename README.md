@@ -205,6 +205,8 @@ docker-compose up --build
 
 - The web client will run at http://localhost:8082.
 
+- [Demo video](https://drive.google.com/file/d/13PzqhaFb1yTmZgRADCoO3eUVco47JahF/view): See a short video showing how it works
+
 - A folder with test images is included in the deploy structure for easy testing.
 
 #### To stop all services:
@@ -258,8 +260,6 @@ docker build -t image-cluster-ai-api .
 docker run -p 8001:8001 --name image-cluster-ai-api image-cluster-ai-api
 ```
 The API will be available at: http://localhost:8001
-
-[Demo video](https://drive.google.com/file/d/13PzqhaFb1yTmZgRADCoO3eUVco47JahF/view): See a short video showing how it works
 
 To verify that the API is running, execute:
 
