@@ -259,6 +259,12 @@ docker run -p 8001:8001 --name image-cluster-ai-api image-cluster-ai-api
 ```
 The API will be available at: http://localhost:8001
 
+To verify that the API is running, execute:
+
+```bash
+curl --location 'http://localhost:8001/health'
+```
+---
 ## 11. Related repositories
 
 This API is part of a larger system:
