@@ -89,7 +89,7 @@ async def upload_images(files: List[UploadFile] = File(...)):
     )
 
     # Save results to disk
-    storage.save(clusters)
+    # storage.save(clusters)
 
     # Generate JSON string
     json_str = renderer.render(clusters)
