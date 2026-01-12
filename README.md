@@ -191,7 +191,6 @@ You can run the **full deploy** (API + web frontend + test images) using **Docke
 git clone https://github.com/rafael-dev-com/image-cluster-ai-deploy
 cd image-cluster-ai-deploy
 ```
----
 
 2. Inside the deploy folder, clone the sub-repositories:
 ```bash
@@ -232,8 +231,11 @@ image-cluster-ai-deploy/
 ```bash
 docker-compose up --build
 ```
+
 The web client will run at http://localhost:8082.
+
 This method works the same way; git just makes it more convenient.
+
 ---
 
 ## 10. Run only the API (Docker)
