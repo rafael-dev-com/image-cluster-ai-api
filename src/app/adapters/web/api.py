@@ -18,6 +18,12 @@ from app.domain.models import ImageItem, Cluster
 
 app = FastAPI()
 
+# Initialize adapters once at startup
+embedding_adapter = OpenCLIPEmbeddingAdapter()
+clustering_adapter = HDBSCANClusteringAdapter()
+captioning_adapter = BLIPCaptioningAdapter()
+renderer = JsonRendererAdapter()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -80,16 +86,12 @@ async def upload_images(files: List[UploadFile] = File(...)):
         images.append(ImageItem(id=file.filename, data=img))
 
     # Initialize adapters
-    storage = DiskStorageAdapter(OUTPUT_FOLDER)
     renderer = JsonRendererAdapter()
 
     # Run pipeline
     clusters: List[Cluster] = run_pipeline(
-        images, OpenCLIPEmbeddingAdapter(), HDBSCANClusteringAdapter(), BLIPCaptioningAdapter()
+        images, embedding_adapter, clustering_adapter, captioning_adapter
     )
-
-    # Save results to disk
-    # storage.save(clusters)
 
     # Generate JSON string
     json_str = renderer.render(clusters)
