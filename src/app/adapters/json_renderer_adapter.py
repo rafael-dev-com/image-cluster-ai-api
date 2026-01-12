@@ -15,7 +15,7 @@ class JsonRendererAdapter(RendererPort):
 
         for cluster in clusters:
             cluster_entry = {
-                "name": str(cluster.label),
+                "name": str(cluster.description.split(" / ")[0].strip()),
                 "image_ids": [img.id for img in cluster.images],  # Collect image IDs
                 "description": cluster.description
             }
