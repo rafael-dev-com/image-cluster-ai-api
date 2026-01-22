@@ -13,21 +13,28 @@ class HDBSCANClusteringAdapter(ClusteringPort):
     """
     Clustering adapter using HDBSCAN on embedding vectors.
     Groups ImageItems into Cluster objects based on cosine similarity.
+    Ensures no image is left out, even if considered noise by HDBSCAN.
     """
 
-    def __init__(self, min_cluster_size=2, min_samples=1):
+    def __init__(self, min_cluster_size: int = 2, min_samples: int = 1):
+        """
+        min_cluster_size must be >= 2 (HDBSCAN requirement)
+        Images marked as noise (-1) will get their own cluster automatically.
+        """
+        if min_cluster_size < 2:
+            logger.warning(
+                "HDBSCAN min_cluster_size must be >= 2, automatically setting to 2"
+            )
+            min_cluster_size = 2
+
         self.min_cluster_size = min_cluster_size
         self.min_samples = min_samples
 
     def cluster_embeddings(self, embeddings: List[EmbeddingVector]) -> List[Cluster]:
-        """
-        Cluster embeddings and return a list of Cluster objects.
-        Noise embeddings (label -1) are ignored.
-        """
         if not embeddings:
             return []
 
-        # Convert embeddings to a 2D numpy array
+        # Convert embeddings to 2D numpy array
         embeddings_array = np.array([e.value for e in embeddings], dtype=np.float64)
 
         # Compute cosine distance matrix
@@ -35,29 +42,33 @@ class HDBSCANClusteringAdapter(ClusteringPort):
         distance_matrix = cosine_distances(embeddings_array)
 
         # Apply HDBSCAN clustering
-        logger.info("Clustering with HDBSCAN...")
+        logger.info("Clustering with HDBSCAN (instance-level settings)...")
         clusterer = hdbscan.HDBSCAN(
             min_cluster_size=self.min_cluster_size,
             min_samples=self.min_samples,
-            metric="precomputed"
+            metric="precomputed",
+            cluster_selection_method="leaf",
+            prediction_data=True
         )
+
         labels = clusterer.fit_predict(distance_matrix)
 
-        # Count clusters (excluding noise)
-        num_clusters = len(set(labels)) - (1 if -1 in labels else 0)
-        logger.info(f"Found clusters (excluding noise): {num_clusters}")
-
-        # Group ImageItems by cluster label
+        # Prepare dictionary to group images by cluster label
         clusters_dict = {}
+        next_label = max(labels) + 1 if len(labels) > 0 else 0
+
         for emb, label in zip(embeddings, labels):
+            # Assign noise images (-1) to their own cluster
             if label == -1:
-                continue  # Skip noise
+                label = next_label
+                next_label += 1
             clusters_dict.setdefault(label, []).append(emb.image)
 
-        # Convert grouped items into Cluster objects
+        # Convert to Cluster objects
         clusters: List[Cluster] = [
             Cluster(label=label, images=imgs, description=None)
             for label, imgs in clusters_dict.items()
         ]
 
+        logger.info(f"Total clusters (including previously noise images): {len(clusters)}")
         return clusters
