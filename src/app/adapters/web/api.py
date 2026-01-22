@@ -7,19 +7,17 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
-from app.adapters.blip_adapter import BLIPCaptioningAdapter
-from app.adapters.disk_storage_adapter import DiskStorageAdapter
-from app.adapters.hdbscan_adapter import HDBSCANClusteringAdapter
-from app.adapters.json_renderer_adapter import JsonRendererAdapter
-from app.adapters.openclip_adapter import OpenCLIPEmbeddingAdapter
-from app.config.settings import OUTPUT_FOLDER
+from app.adapters.descriptions.blip_adapter import BLIPCaptioningAdapter
+from app.adapters.clustering.hdbscan_adapter import HDBSCANClusteringAdapter
+from app.adapters.embeddings.dinov2_adapter import DINOv2EmbeddingAdapter
+from app.adapters.render.json_renderer_adapter import JsonRendererAdapter
 from app.core.rchestrator import run_pipeline
 from app.domain.models import ImageItem, Cluster
 
 app = FastAPI()
 
 # Initialize adapters once at startup
-embedding_adapter = OpenCLIPEmbeddingAdapter()
+embedding_adapter = DINOv2EmbeddingAdapter()
 clustering_adapter = HDBSCANClusteringAdapter()
 captioning_adapter = BLIPCaptioningAdapter()
 renderer = JsonRendererAdapter()
